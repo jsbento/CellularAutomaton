@@ -21,6 +21,7 @@ int main()
 
     //Pointer to the CA being simulated
     CellularAutomaton *ca = nullptr;
+    CellularAutomaton *temp = nullptr;
 
     //File path for return server messages
     string path;
@@ -82,9 +83,12 @@ int main()
                     break;
                 case LOAD:
                     path = client.requestFile();
-                    if(!path.empty())
+                    temp = new CellularAutomaton(path, 0);
+                    if(!temp->getData())
+                        cout << "Null path" << endl;
+                    else
                     {
-                        ca = new CellularAutomaton(path, 0);
+                        ca = temp;
                         ca->displayCA(client);
                     }
                     break;

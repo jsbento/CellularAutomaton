@@ -172,47 +172,54 @@ void CellularAutomaton::displayCA(GraphicsClient &gc)
 //Uses modified C code from Project 1C
 void CellularAutomaton::readFile(string filepath)
 {
-    FILE *file = fopen(filepath.c_str(), "r");
-    if(file == NULL)
+    try
     {
-        throw CellularAutomatonException("File not found or invalid path.");
+        FILE *file = fopen(filepath.c_str(), "r");
+
+        if(file == NULL)
+            throw CellularAutomatonException("File not found or invalid path.");
+        const size_t line_size = 600;
+        char *buffer = new char[line_size];
+
+        //Read and parse first line
+        fgets(buffer, line_size, file);
+        height = atoi(strtok(buffer, " "));
+        width = atoi(strtok(NULL, " "));
+        data = new (nothrow) unsigned char[width*height];
+
+        int row = 0, col = 0;
+        while(fgets(buffer, line_size, file) != NULL)
+        {
+            for(int i = 0; buffer[i] != '\0'; i++)
+                if(buffer[i] != ' ' && buffer[i] != '\n')
+                {
+                    unsigned char value = (unsigned char)(buffer[i]-ASCII_OFFSET);
+
+                    if(value == 0 || value == 1)
+                    {
+                        data[width*row+col] = value;
+                        col += 1;
+                        if(col == width)
+                            col = 0;
+                    }
+                    else
+                    {
+                        delete[] buffer;
+                        delete[] data;
+                        std::fclose(file);
+                        throw CellularAutomatonException("Invalid number of states in file. GOL allows only 2 states.");
+                    }
+                }
+            row += 1;
+        }
+        delete[] buffer;
+        std::fclose(file);
     }
-    const size_t line_size = 600;
-    char *buffer = new char[line_size];
-
-    //Read and parse first line
-    fgets(buffer, line_size, file);
-    height = atoi(strtok(buffer, " "));
-    width = atoi(strtok(NULL, " "));
-    data = new (nothrow) unsigned char[width*height];
-
-    int row = 0, col = 0;
-    while(fgets(buffer, line_size, file) != NULL)
+    catch(CellularAutomatonException e)
     {
-        for(int i = 0; buffer[i] != '\0'; i++)
-            if(buffer[i] != ' ' && buffer[i] != '\n')
-            {
-                unsigned char value = (unsigned char)(buffer[i]-ASCII_OFFSET);
-
-                if(value == 0 || value == 1)
-                {
-                    data[width*row+col] = value;
-                    col += 1;
-                    if(col == width)
-                        col = 0;
-                }
-                else
-                {
-                    delete[] buffer;
-                    delete[] data;
-                    fclose(file);
-                    throw CellularAutomatonException("Invalid number of states in file. GOL allows only 2 states.");
-                }
-            }
-        row += 1;
+        data = nullptr;
+        cout << e.message() << endl;
     }
-    delete[] buffer;
-    fclose(file);
 }
 
 void CellularAutomaton::randomInit()

@@ -12,6 +12,19 @@
 #include <io.h>
 #include <string>
 
+#define NO_OPTION -1 //The following list of definitions here
+#define CA 0         //are used for determining which button  
+#define SIZE_1 1     //was pressed on the client
+#define SIZE_2 2
+#define SIZE_3 3
+#define STEP 4
+#define RUN 5
+#define PAUSE 6
+#define RESET 7
+#define RANDOM 8
+#define LOAD 9
+#define QUIT 10
+
 using namespace std;
 
 class GraphicsClient
@@ -26,18 +39,6 @@ class GraphicsClient
         void connectClient(); //Helper method for connecting when the port or url change
         void drawGUI();
     public:
-        #define NO_OPTION -1 //The following list of definitions here
-        #define CA 0         //are used for determining which button  
-        #define SIZE_1 1     //was pressed on the client
-        #define SIZE_2 2
-        #define SIZE_3 3
-        #define STEP 4
-        #define RUN 5
-        #define PAUSE 6
-        #define RESET 7
-        #define RANDOM 8
-        #define LOAD 9
-        #define QUIT 10
         GraphicsClient(string, int); //Constructor
         GraphicsClient(const GraphicsClient &); //Copy constructor
         ~GraphicsClient(); //Destructor
